@@ -1,7 +1,13 @@
-import '../styles/globals.css'
+import "../styles/globals.css";
+import * as PropTypes from "prop-types";
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+function _app({ Component, pageProps }) {
+  return <Component {...pageProps} />;
 }
 
-export default MyApp
+_app.propTypes = {
+  Component: PropTypes.any,
+  pageProps: PropTypes.object,
+};
+
+export default _app;
