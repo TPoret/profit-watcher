@@ -1,9 +1,9 @@
-export interface Sum {
+export interface Amount {
   readonly value: number;
   readonly currency: string;
 }
 
-export interface Transaction extends Sum {
+export interface Transaction extends Amount {
   readonly date: Date;
 }
 
