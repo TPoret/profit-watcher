@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/TPoret/profit-watcher/branch/master/graph/badge.svg?token=0ODO10UKF5)](https://codecov.io/gh/TPoret/profit-watcher)
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
