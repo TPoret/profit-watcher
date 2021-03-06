@@ -1,4 +1,4 @@
-import { endpoint } from "./endpoint";
+import { endpoint, EndpointSecurity, markSecurity } from "./endpoint";
 
 interface SpotOrder {
   readonly symbol: string; // "LTCBTC"
@@ -36,8 +36,11 @@ interface SpotOrder {
 //  Extra bonus list
 
 export const allOrders = async (): Promise<SpotOrder[]> => {
-  const res = await endpoint.get("/api/v3/allOrders");
-  const data = (await res.data) as any[];
+  const res = await endpoint.get(
+    "/api/v3/allOrders",
+    markSecurity(EndpointSecurity.USER_DATA)
+  );
+  const data = res.data as any[];
   return data.map((value) => {
     return {
       ...value,
@@ -52,4 +55,13 @@ export const allOrders = async (): Promise<SpotOrder[]> => {
       origQuoteOrderQty: parseFloat(value.origQuoteOrderQty),
     };
   });
+};
+
+export const getServerTime = async (): Promise<Date> => {
+  const res = await endpoint.get(
+    "/api/v3/time",
+    markSecurity(EndpointSecurity.NONE)
+  );
+  const serverTimestamp: number = res.data.serverTime;
+  return new Date(serverTimestamp);
 };
