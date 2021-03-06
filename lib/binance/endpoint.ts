@@ -40,7 +40,7 @@ export class RequestLimiter {
   }
 }
 
-enum EndpointSecurity {
+export enum EndpointSecurity {
   NONE,
   TRADE,
   MARGIN,
@@ -155,12 +155,24 @@ const prepareRequestActions: Map<
   [EndpointSecurity.MARKET_DATA, (conf) => addApiKey(dataToQueryString(conf))],
 ]);
 
+export const markSecurity = (
+  security: EndpointSecurity
+): AxiosRequestConfig => {
+  return {
+    ...endpoint.defaults,
+    headers: {
+      ...endpoint.defaults.headers,
+      endpointSecurity: security,
+    },
+  };
+};
+
 /**
  * Return a request that has all data to ensure it passes
  * For example: add signature when needed
  * @param config the config coming from the request
  */
 const prepareRequest = (config: AxiosRequestConfig): AxiosRequestConfig => {
-  const security: EndpointSecurity = config.headers.EndpointSecurity;
+  const security: EndpointSecurity = config.headers.endpointSecurity;
   return prepareRequestActions[security](config);
 };
