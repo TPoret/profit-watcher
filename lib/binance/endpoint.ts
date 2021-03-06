@@ -174,5 +174,13 @@ export const markSecurity = (
  */
 const prepareRequest = (config: AxiosRequestConfig): AxiosRequestConfig => {
   const security: EndpointSecurity = config.headers.endpointSecurity;
-  return prepareRequestActions[security](config);
+  const newConfig = prepareRequestActions.get(security)(config);
+  // Removing extra property the immutable way
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { endpointSecurity, remainder } = newConfig.headers;
+
+  return {
+    ...newConfig,
+    headers: remainder,
+  };
 };
