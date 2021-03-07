@@ -20,6 +20,7 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        <p>Does it work?</p>
         <p>Binance timestamp is : {serverTimestamp}</p>
       </main>
     </div>
