@@ -71,10 +71,10 @@ jobs:
         run: yarn install --prefer-offline --frozen-lockfile
 
       - name: Build app
-        run: yarn build
+        run: yarn export
 
       - name: Deploying to Vercel
         env:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-        run: yarn vercel deploy .next --prod -t ${{ secrets.VERCEL_TOKEN }} -c
+        run: yarn vercel deploy out --prod -t ${{ secrets.VERCEL_TOKEN }} -c
