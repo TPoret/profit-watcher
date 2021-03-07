@@ -1,0 +1,80 @@
+name: Test and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache yarn modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-yarn
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            $HOME/.cache/firebase
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install Dependencies
+        run: yarn install --prefer-offline --frozen-lockfile
+
+      - name: Running tests
+        run: yarn test:ci
+
+      - name: Upload coverage
+        run: codecov -t ${{ secrets.CODECOV_TOKEN }}
+  deploy:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 14
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - name: Cache yarn modules
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-yarn
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            $HOME/.cache/firebase
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: Install Dependencies
+        run: yarn install --prefer-offline --frozen-lockfile
+
+      - name: Build app
+        run: yarn build
+
+      - name: Deploying to Vercel
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: yarn vercel deploy .next --prod -t ${{ secrets.VERCEL_TOKEN }} -c
